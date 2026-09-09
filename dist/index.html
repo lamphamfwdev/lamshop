@@ -1,0 +1,167 @@
+<!doctype html>
+<html lang="vi">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      name="description"
+      content="Danh mục sản phẩm, tìm kiếm nhanh và đặt hàng qua Facebook Messenger."
+    />
+    <meta name="theme-color" content="#205781" />
+    <title>LAM SHOP · Sản phẩm chọn lọc</title>
+    <link rel="preconnect" href="https://images.unsplash.com" />
+    <link rel="stylesheet" href="./assets/css/main.css" />
+  </head>
+  <body>
+    <a class="skip-link" href="#product-list">Đi đến danh sách sản phẩm</a>
+
+    <header class="site-header">
+      <div class="shell header-inner">
+        <a class="brand" href="#" aria-label="Về đầu trang">
+          <span class="brand-mark" aria-hidden="true">L</span>
+          <span>
+            <strong id="shop-name">LAM SHOP</strong>
+            <small>Chọn nhanh · Đặt dễ</small>
+          </span>
+        </a>
+
+        <label class="search-box" for="search-input">
+          <svg aria-hidden="true" viewBox="0 0 24 24">
+            <path d="m21 21-4.35-4.35m2.35-5.65a8 8 0 1 1-16 0 8 8 0 0 1 16 0Z" />
+          </svg>
+          <input
+            id="search-input"
+            type="search"
+            autocomplete="off"
+            placeholder="Tìm tên, mã hoặc loại sản phẩm…"
+          />
+        </label>
+
+        <button class="cart-button" id="cart-button" type="button" aria-haspopup="dialog">
+          <svg aria-hidden="true" viewBox="0 0 24 24">
+            <path d="M3 3h2l2.1 10.4a2 2 0 0 0 2 1.6h7.8a2 2 0 0 0 2-1.6L20 7H6M9 20h.01M17 20h.01" />
+          </svg>
+          <span>Giỏ hàng</span>
+          <span class="cart-count" id="cart-count">0</span>
+        </button>
+      </div>
+    </header>
+
+    <main>
+      <section class="intro shell" aria-labelledby="page-title">
+        <div>
+          <p class="eyebrow">SẢN PHẨM NỔI BẬT</p>
+          <h1 id="page-title">Tìm món phù hợp với bạn</h1>
+          <p id="shop-description">Phụ kiện công nghệ chọn lọc, giá rõ ràng.</p>
+        </div>
+        <div class="intro-note">
+          <span>Giao diện rõ ràng</span>
+          <strong>Giá luôn hiển thị minh bạch</strong>
+        </div>
+      </section>
+
+      <section class="catalog shell" aria-labelledby="catalog-title">
+        <div class="catalog-heading">
+          <div>
+            <h2 id="catalog-title">Danh mục sản phẩm</h2>
+            <p id="result-count" aria-live="polite"></p>
+          </div>
+          <button class="filter-toggle" id="filter-toggle" type="button" aria-expanded="false">
+            Bộ lọc
+          </button>
+        </div>
+
+        <div class="filters" id="filters">
+          <div class="category-list" id="category-list" aria-label="Lọc theo danh mục"></div>
+
+          <div class="select-group">
+            <label for="price-filter">Mức giá</label>
+            <select id="price-filter">
+              <option value="all">Tất cả mức giá</option>
+              <option value="200000">Dưới 200.000đ</option>
+              <option value="500000">Dưới 500.000đ</option>
+              <option value="1000000">Dưới 1.000.000đ</option>
+            </select>
+          </div>
+
+          <div class="select-group">
+            <label for="sort-select">Sắp xếp</label>
+            <select id="sort-select">
+              <option value="featured">Nổi bật</option>
+              <option value="price-asc">Giá thấp đến cao</option>
+              <option value="price-desc">Giá cao đến thấp</option>
+              <option value="name">Tên A–Z</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="product-grid" id="product-list"></div>
+
+        <div class="empty-state" id="empty-state" hidden>
+          <span aria-hidden="true">⌕</span>
+          <h3>Không tìm thấy sản phẩm</h3>
+          <p>Thử từ khóa khác hoặc bỏ bớt điều kiện lọc.</p>
+          <button id="reset-filter" class="secondary-button" type="button">Xóa bộ lọc</button>
+        </div>
+      </section>
+    </main>
+
+    <footer class="site-footer">
+      <div class="shell footer-grid">
+        <div>
+          <a class="brand brand-footer" href="#">
+            <span class="brand-mark" aria-hidden="true">L</span>
+            <strong id="footer-shop-name">LAM SHOP</strong>
+          </a>
+          <p id="footer-description"></p>
+        </div>
+        <div>
+          <h2>Thông tin shop</h2>
+          <ul>
+            <li id="shop-address"></li>
+            <li><a id="shop-phone" href="#"></a></li>
+            <li><a id="shop-email" href="#"></a></li>
+          </ul>
+        </div>
+        <div>
+          <h2>Đặt hàng</h2>
+          <p>Thêm sản phẩm vào giỏ, copy đơn rồi gửi trực tiếp qua Messenger.</p>
+          <a class="footer-link" id="facebook-link" href="#" target="_blank" rel="noopener">Facebook của shop →</a>
+        </div>
+      </div>
+      <div class="shell footer-bottom">
+        <span>© <span id="current-year"></span> <span id="copyright-shop-name">LAM SHOP</span></span>
+        <a href="#">Lên đầu trang ↑</a>
+      </div>
+    </footer>
+
+    <div class="dialog-backdrop" id="cart-dialog" hidden>
+      <section class="cart-dialog" role="dialog" aria-modal="true" aria-labelledby="cart-title">
+        <div class="dialog-header">
+          <div>
+            <p class="eyebrow">ĐƠN HÀNG CỦA BẠN</p>
+            <h2 id="cart-title">Giỏ hàng</h2>
+          </div>
+          <button class="icon-button" id="close-cart" type="button" aria-label="Đóng giỏ hàng">×</button>
+        </div>
+        <div class="cart-items" id="cart-items"></div>
+        <div class="cart-empty" id="cart-empty" hidden>
+          <span aria-hidden="true">◌</span>
+          <p>Giỏ hàng đang trống.</p>
+          <button class="secondary-button" id="continue-shopping" type="button">Tiếp tục xem sản phẩm</button>
+        </div>
+        <div class="cart-summary" id="cart-summary">
+          <div><span>Tạm tính</span><strong id="cart-total"></strong></div>
+          <p>Nội dung đơn sẽ được copy trước khi mở Messenger.</p>
+          <div class="cart-actions">
+            <button class="secondary-button" id="copy-order" type="button">Copy đơn hàng</button>
+            <button class="primary-button" id="messenger-order" type="button">Copy & mở Messenger</button>
+          </div>
+        </div>
+      </section>
+    </div>
+
+    <div class="toast" id="toast" role="status" aria-live="polite" hidden></div>
+    <script type="module" src="./assets/js/app.js"></script>
+  </body>
+</html>

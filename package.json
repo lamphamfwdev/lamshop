@@ -1,0 +1,14 @@
+{
+  "name": "lam-shop-static",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "node scripts/build.mjs",
+    "typecheck": "tsc --noEmit",
+    "preview": "npm run build && npx serve dist"
+  },
+  "devDependencies": {
+    "typescript": "^5.9.2"
+  }
+}
