@@ -22,3 +22,8 @@ export const escapeHtml = (value: string): string =>
         character
       ] ?? character
   );
+
+export const optimizeImageUrl = (value: string, width = 800): string => {
+  if (!value.includes("res.cloudinary.com/") || !value.includes("/upload/")) return value;
+  return value.replace("/upload/", `/upload/f_auto,q_auto,w_${Math.max(120, Math.round(width))},c_limit/`);
+};

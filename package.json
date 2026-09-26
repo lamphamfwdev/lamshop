@@ -4,11 +4,13 @@
   "private": true,
   "type": "module",
   "scripts": {
+    "generate:products": "node scripts/generate-products.mjs",
     "build": "node scripts/build.mjs",
-    "typecheck": "tsc --noEmit",
-    "preview": "npm run build && npx serve dist"
+    "typecheck": "npm run generate:products && tsc --noEmit",
+    "preview": "npm run build && node scripts/preview.mjs"
   },
   "devDependencies": {
+    "read-excel-file": "^9.3.10",
     "typescript": "^5.9.2"
   }
 }

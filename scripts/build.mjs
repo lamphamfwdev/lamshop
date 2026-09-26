@@ -8,7 +8,9 @@ const distDir = path.join(projectRoot, "dist");
 
 await rm(distDir, { recursive: true, force: true });
 await mkdir(path.join(distDir, "assets"), { recursive: true });
+await mkdir(path.join(projectRoot, "assets", "images", "products"), { recursive: true });
 
+execFileSync("node", ["scripts/generate-products.mjs"], { cwd: projectRoot, stdio: "inherit" });
 execFileSync("npx", ["tsc"], { cwd: projectRoot, stdio: "inherit" });
 
 await cp(path.join(projectRoot, "index.html"), path.join(distDir, "index.html"));
