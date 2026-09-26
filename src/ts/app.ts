@@ -133,9 +133,80 @@ const renderProducts = (): void => {
 };
 
 const renderCart = (): void => {
-  const items = cart.getItems(); cartCount.textContent = String(cart.count()); cartCount.classList.toggle("has-items",cart.count()>0); cartEmpty.hidden = items.length>0; cartSummary.hidden = items.length===0;
-  cartItems.innerHTML = items.map((item)=>{ const p=products.find((x)=>x.id===item.productId); if(!p)return ""; return `<article class="cart-item"><img src="${escapeHtml(optimizeImageUrl(p.image,180))}" alt="" width="72" height="72"><div class="cart-item-info"><strong>${escapeHtml(p.name)}</strong><span>${formatPrice(p.price)}</span><div class="quantity-control" aria-label="Số lượng ${escapeHtml(p.name)}"><button type="button" data-decrease="${escapeHtml(p.id)}">−</button><span>${item.quantity}</span><button type="button" data-increase="${escapeHtml(p.id)}">+</button></div></div><button class="remove-item" type="button" data-remove="${escapeHtml(p.id)}" aria-label="Xóa">×</button></article>`; }).join("");
-  setText("cart-total",formatPrice(cart.total(products)));
+  const items = cart
+    .getItems()
+    .filter((item) =>
+      products.some((product) => product.id === item.productId)
+    );
+
+  const visibleItemCount = items.reduce(
+    (total, item) => total + item.quantity,
+    0
+  );
+
+  cartCount.textContent = String(visibleItemCount);
+  cartCount.classList.toggle("has-items", visibleItemCount > 0);
+
+  cartEmpty.hidden = items.length > 0;
+  cartSummary.hidden = items.length === 0;
+
+  cartItems.innerHTML = items
+    .map((item) => {
+      const product = products.find(
+        (entry) => entry.id === item.productId
+      );
+
+      if (!product) return "";
+
+      return `
+        <article class="cart-item">
+          <img
+            src="${escapeHtml(optimizeImageUrl(product.image, 180))}"
+            alt=""
+            width="72"
+            height="72"
+          >
+
+          <div class="cart-item-info">
+            <strong>${escapeHtml(product.name)}</strong>
+            <span>${formatPrice(product.price)}</span>
+
+            <div
+              class="quantity-control"
+              aria-label="Số lượng ${escapeHtml(product.name)}"
+            >
+              <button
+                type="button"
+                data-decrease="${escapeHtml(product.id)}"
+              >
+                −
+              </button>
+
+              <span>${item.quantity}</span>
+
+              <button
+                type="button"
+                data-increase="${escapeHtml(product.id)}"
+              >
+                +
+              </button>
+            </div>
+          </div>
+
+          <button
+            class="remove-item"
+            type="button"
+            data-remove="${escapeHtml(product.id)}"
+            aria-label="Xóa"
+          >
+            ×
+          </button>
+        </article>
+      `;
+    })
+    .join("");
+
+  setText("cart-total", formatPrice(cart.total(products)));
 };
 const showToast = (message: string): void => { window.clearTimeout(toastTimer); toast.textContent=message; toast.hidden=false; requestAnimationFrame(()=>toast.classList.add("is-visible")); toastTimer=window.setTimeout(()=>{toast.classList.remove("is-visible");window.setTimeout(()=>toast.hidden=true,200);},2600); };
 const openOverlay = (overlay: HTMLElement): void => { overlay.hidden=false; document.body.classList.add("dialog-open"); };
