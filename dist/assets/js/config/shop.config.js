@@ -8,3 +8,6 @@ export const SHOP_CONFIG = {
     // Thay bằng username ở cuối URL fanpage, ví dụ: facebook.com/lamshop -> lamshop
     facebookPageUsername: "YOUR_PAGE_USERNAME"
 };
+export const CATALOG_CONFIG = {
+    productsPerPage: 24
+};

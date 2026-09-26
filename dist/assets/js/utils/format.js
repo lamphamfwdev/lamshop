@@ -11,3 +11,8 @@ export const normalizeText = (value) => value
     .toLowerCase()
     .trim();
 export const escapeHtml = (value) => value.replace(/[&<>'"]/g, (character) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", "'": "&#039;", '"': "&quot;" })[character] ?? character);
+export const optimizeImageUrl = (value, width = 800) => {
+    if (!value.includes("res.cloudinary.com/") || !value.includes("/upload/"))
+        return value;
+    return value.replace("/upload/", `/upload/f_auto,q_auto,w_${Math.max(120, Math.round(width))},c_limit/`);
+};

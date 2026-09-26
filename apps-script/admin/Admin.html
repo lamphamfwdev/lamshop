@@ -1,0 +1,479 @@
+<!doctype html>
+<html lang="vi">
+  <head>
+    <base target="_top">
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <style>
+      :root {
+        --navy: #111111;
+        --teal: #333333;
+        --mint: #f4b53f;
+        --cream: #ffffff;
+        --ink: #171717;
+        --muted: #687b86;
+        --line: #dce8e6;
+        --bg: #f4f8f7;
+        --white: #fff;
+        --danger: #b53d3d;
+        --shadow: 0 18px 50px rgba(32, 87, 129, .1);
+      }
+      * { box-sizing: border-box; }
+      body { margin: 0; color: var(--ink); background: var(--bg); font: 15px/1.5 Inter, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; }
+      button, input, select, textarea { font: inherit; }
+      button { cursor: pointer; }
+      [hidden] { display: none !important; }
+      .app { min-height: 100vh; }
+      .topbar { position: sticky; z-index: 20; top: 0; display: flex; align-items: center; justify-content: space-between; gap: 20px; min-height: 70px; padding: 12px 28px; color: white; background: var(--navy); }
+      .brand { display: flex; align-items: center; gap: 12px; }
+      .brand-mark { display: grid; width: 42px; height: 42px; place-items: center; border-radius: 13px 13px 5px 13px; color: var(--navy); background: var(--cream); font-weight: 900; }
+      .brand strong, .brand small { display: block; }
+      .brand strong { letter-spacing: .06em; }
+      .brand small { color: rgba(255,255,255,.7); font-size: 12px; }
+      .account { color: rgba(255,255,255,.8); font-size: 13px; text-align: right; }
+      .layout { display: grid; grid-template-columns: 235px minmax(0, 1fr); min-height: calc(100vh - 70px); }
+      .sidebar { padding: 24px 16px; border-right: 1px solid var(--line); background: white; }
+      .nav { display: grid; gap: 7px; position: sticky; top: 94px; }
+      .nav button { display: flex; align-items: center; gap: 10px; min-height: 46px; padding: 0 14px; border: 0; border-radius: 12px; color: var(--muted); background: transparent; text-align: left; font-weight: 750; }
+      .nav button:hover, .nav button.active { color: white; background: var(--teal); }
+      .nav .nav-icon { width: 25px; font-weight: 900; text-align: center; }
+      .main { min-width: 0; padding: 30px; }
+      .page-head { display: flex; align-items: flex-end; justify-content: space-between; gap: 20px; margin-bottom: 22px; }
+      .page-head h1 { margin: 0; color: var(--navy); font-size: clamp(26px, 3vw, 38px); letter-spacing: -.035em; }
+      .page-head p { margin: 5px 0 0; color: var(--muted); }
+      .button { min-height: 42px; padding: 9px 15px; border: 1px solid var(--line); border-radius: 11px; color: var(--ink); background: white; font-weight: 800; }
+      .button:hover { border-color: var(--teal); background: #f1faf7; }
+      .button.primary { border-color: var(--navy); color: white; background: var(--navy); }
+      .button.primary:hover { background: #174767; }
+      .button.danger { border-color: #efcccc; color: var(--danger); background: #fff5f5; }
+      .button.small { min-height: 34px; padding: 6px 10px; font-size: 13px; }
+      .button:disabled { opacity: .55; cursor: wait; }
+      .stats { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; margin-bottom: 22px; }
+      .stat { padding: 20px; border: 1px solid var(--line); border-radius: 17px; background: white; }
+      .stat span { display: block; color: var(--muted); font-size: 13px; font-weight: 700; }
+      .stat strong { display: block; margin-top: 4px; color: var(--navy); font-size: 29px; }
+      .card { border: 1px solid var(--line); border-radius: 18px; background: white; box-shadow: 0 2px 0 rgba(32,87,129,.02); }
+      .toolbar { display: flex; align-items: center; justify-content: space-between; gap: 14px; padding: 16px; border-bottom: 1px solid var(--line); }
+      .search { width: min(420px, 100%); height: 42px; padding: 0 14px; border: 1px solid var(--line); border-radius: 11px; outline: none; }
+      .search:focus, input:focus, select:focus, textarea:focus { border-color: var(--teal); box-shadow: 0 0 0 3px rgba(79,149,157,.14); outline: none; }
+      .table-wrap { overflow-x: auto; }
+      table { width: 100%; border-collapse: collapse; }
+      th, td { padding: 13px 14px; border-bottom: 1px solid var(--line); text-align: left; vertical-align: middle; }
+      th { color: var(--muted); background: #fbfdfc; font-size: 12px; letter-spacing: .04em; text-transform: uppercase; }
+      tbody tr:hover { background: #f8fbfa; }
+      .product-cell { display: grid; grid-template-columns: 52px minmax(160px, 1fr); align-items: center; gap: 11px; }
+      .product-cell img { width: 52px; height: 52px; border-radius: 10px; object-fit: cover; background: #edf5f3; }
+      .product-cell strong, .product-cell small { display: block; }
+      .product-cell small { color: var(--muted); }
+      .status { display: inline-flex; align-items: center; min-height: 26px; padding: 3px 9px; border-radius: 999px; color: #2c6848; background: #e8f6ed; font-size: 12px; font-weight: 800; white-space: nowrap; }
+      .status.off { color: #795d31; background: #fff5dc; }
+      .status.draft { color: #555; background: #ececec; }
+      .actions { display: flex; gap: 7px; white-space: nowrap; }
+      .pagination { display: flex; align-items: center; justify-content: space-between; gap: 16px; padding: 14px 16px; color: var(--muted); font-size: 13px; }
+      .pagination-buttons { display: flex; gap: 7px; }
+      .section { display: none; }
+      .section.active { display: block; }
+      .form-card { padding: 22px; }
+      .form-card h2 { margin: 0 0 4px; color: var(--navy); }
+      .form-card > p { margin: 0 0 22px; color: var(--muted); }
+      .form-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 17px; }
+      .field { display: grid; gap: 6px; }
+      .field.full { grid-column: 1 / -1; }
+      .field label { color: #4a616d; font-size: 13px; font-weight: 800; }
+      .field input, .field select, .field textarea { width: 100%; min-height: 43px; padding: 9px 12px; border: 1px solid var(--line); border-radius: 10px; color: var(--ink); background: white; }
+      .field textarea { min-height: 92px; resize: vertical; }
+      .field small { color: var(--muted); }
+      .form-actions { display: flex; justify-content: flex-end; gap: 10px; margin-top: 22px; padding-top: 18px; border-top: 1px solid var(--line); }
+      .logo-row { display: grid; grid-template-columns: 90px 1fr; align-items: center; gap: 16px; }
+      .image-preview { display: grid; width: 90px; height: 90px; place-items: center; overflow: hidden; border: 1px dashed var(--teal); border-radius: 15px; color: var(--muted); background: #f5fbf9; font-size: 12px; text-align: center; }
+      .image-preview img { width: 100%; height: 100%; object-fit: contain; }
+      .empty { padding: 55px 20px; color: var(--muted); text-align: center; }
+      dialog { width: min(720px, calc(100% - 30px)); max-height: calc(100vh - 30px); padding: 0; border: 0; border-radius: 21px; color: var(--ink); background: white; box-shadow: 0 28px 90px rgba(14,42,58,.3); }
+      dialog::backdrop { background: rgba(11,37,52,.66); backdrop-filter: blur(5px); }
+      .dialog-head { display: flex; align-items: center; justify-content: space-between; gap: 15px; padding: 20px 22px; border-bottom: 1px solid var(--line); }
+      .dialog-head h2 { margin: 0; color: var(--navy); }
+      .dialog-close { width: 38px; height: 38px; border: 1px solid var(--line); border-radius: 50%; background: white; font-size: 21px; }
+      .dialog-body { max-height: calc(100vh - 130px); overflow: auto; padding: 22px; }
+      .check-row { display: flex; flex-wrap: wrap; gap: 24px; }
+      .check { display: inline-flex; align-items: center; gap: 8px; font-weight: 750; }
+      .check input { width: 18px; height: 18px; accent-color: var(--teal); }
+      .upload-box { display: grid; grid-template-columns: 130px 1fr; gap: 15px; align-items: center; }
+      .upload-preview { width: 130px; aspect-ratio: 4/3; overflow: hidden; border: 1px dashed var(--teal); border-radius: 14px; background: #f1f8f6; }
+      .upload-preview img { width: 100%; height: 100%; object-fit: cover; }
+      .upload-note { color: var(--muted); font-size: 13px; }
+      .image-url-grid { display: grid; gap: 8px; margin-top: 10px; }
+      .mini-note { padding: 11px 13px; border-radius: 10px; color: #5f4a14; background: #fff4cf; font-size: 13px; }
+      .toast { position: fixed; z-index: 100; right: 22px; bottom: 22px; max-width: 420px; padding: 13px 17px; border-left: 5px solid var(--mint); border-radius: 11px; color: white; background: var(--ink); box-shadow: var(--shadow); }
+      .busy { position: fixed; z-index: 90; inset: 0; display: grid; place-items: center; background: rgba(244,248,247,.74); backdrop-filter: blur(3px); }
+      .busy-card { display: flex; align-items: center; gap: 12px; padding: 15px 18px; border: 1px solid var(--line); border-radius: 13px; background: white; box-shadow: var(--shadow); font-weight: 800; }
+      .spinner { width: 20px; height: 20px; border: 3px solid var(--line); border-top-color: var(--teal); border-radius: 50%; animation: spin .8s linear infinite; }
+      @keyframes spin { to { transform: rotate(360deg); } }
+      @media (max-width: 850px) {
+        .layout { grid-template-columns: 1fr; }
+        .sidebar { position: sticky; z-index: 15; top: 70px; padding: 9px 14px; border-right: 0; border-bottom: 1px solid var(--line); overflow-x: auto; }
+        .nav { display: flex; position: static; width: max-content; }
+        .nav button { min-height: 40px; }
+        .main { padding: 22px 16px 40px; }
+        .stats { grid-template-columns: 1fr; }
+        .form-grid { grid-template-columns: 1fr; }
+        .field.full { grid-column: auto; }
+      }
+      @media (max-width: 560px) {
+        .topbar { padding-inline: 16px; }
+        .account { display: none; }
+        .page-head { align-items: stretch; flex-direction: column; }
+        .toolbar { align-items: stretch; flex-direction: column; }
+        .toolbar .button { width: 100%; }
+        .pagination { align-items: stretch; flex-direction: column; }
+        .upload-box, .logo-row { grid-template-columns: 1fr; }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="app">
+      <header class="topbar">
+        <div class="brand"><span class="brand-mark">L</span><span><strong>LAM SHOP</strong><small>Trang quản trị</small></span></div>
+        <div class="account"><strong id="user-email">Đang tải…</strong><small style="display:block">Quản trị viên</small></div>
+      </header>
+
+      <div class="layout">
+        <aside class="sidebar">
+          <nav class="nav" aria-label="Chức năng quản trị">
+            <button class="active" data-tab="products"><span class="nav-icon">01</span>Sản phẩm</button>
+            <button data-tab="settings"><span class="nav-icon">02</span>Nội dung shop</button>
+            <button data-tab="filters"><span class="nav-icon">03</span>Bộ lọc giá</button>
+          </nav>
+        </aside>
+
+        <main class="main">
+          <section class="section active" id="section-products">
+            <div class="page-head"><div><h1>Sản phẩm</h1><p>Thêm, sửa, ẩn và quản lý ảnh sản phẩm.</p></div><button class="button primary" id="add-product">Thêm sản phẩm</button></div>
+            <div class="stats">
+              <div class="stat"><span>Tổng sản phẩm</span><strong id="stat-total">0</strong></div>
+              <div class="stat"><span>Đang hiển thị</span><strong id="stat-active">0</strong></div>
+              <div class="stat"><span>Đang tạm ẩn</span><strong id="stat-hidden">0</strong></div>
+            </div>
+            <div class="card">
+              <div class="toolbar"><input class="search" id="product-search" type="search" placeholder="Tìm theo mã, tên hoặc danh mục…"><button class="button" id="open-sheet">Mở Google Sheets</button></div>
+              <div class="table-wrap"><table><thead><tr><th>Sản phẩm</th><th>Danh mục</th><th>Giá bán</th><th>Trạng thái</th><th>Cập nhật</th><th>Thao tác</th></tr></thead><tbody id="product-rows"></tbody></table></div>
+              <div class="empty" id="products-empty" hidden>Chưa có sản phẩm phù hợp.</div>
+              <div class="pagination"><span id="product-page-info"></span><div class="pagination-buttons"><button class="button small" id="product-prev">Trước</button><button class="button small" id="product-next">Sau</button></div></div>
+            </div>
+          </section>
+
+          <section class="section" id="section-settings">
+            <div class="page-head"><div><h1>Nội dung shop</h1><p>Logo, tiêu đề, slogan và thông tin liên hệ.</p></div></div>
+            <form class="card form-card" id="settings-form">
+              <h2>Thương hiệu</h2><p>Nội dung này hiển thị ở header và trên tab trình duyệt.</p>
+              <div class="form-grid">
+                <div class="field full"><label>Logo shop</label><div class="logo-row"><div class="image-preview" id="logo-preview">Chưa có logo</div><div><input id="logo-file" type="file" accept="image/jpeg,image/png,image/webp,image/avif"><p class="upload-note">Chọn ảnh từ máy. Ảnh được tải lên Cloudinary, không lưu vào GitHub.</p><input name="logoUrl" id="setting-logo-url" type="hidden"></div></div></div>
+                <div class="field"><label for="setting-shopName">Tên shop</label><input id="setting-shopName" name="shopName" required></div>
+                <div class="field"><label for="setting-tagline">Slogan ở header</label><input id="setting-tagline" name="tagline"></div>
+                <div class="field"><label for="setting-pageTitle">Tiêu đề tab trình duyệt</label><input id="setting-pageTitle" name="pageTitle"></div>
+                <div class="field"><label for="setting-productsPerPage">Sản phẩm mỗi trang</label><input id="setting-productsPerPage" name="productsPerPage" type="number" min="1" max="100"></div>
+                <div class="field full"><label for="setting-metaDescription">Mô tả tìm kiếm</label><textarea id="setting-metaDescription" name="metaDescription"></textarea></div>
+              </div>
+
+              <h2 style="margin-top:30px">Nội dung đầu trang</h2><p>Các tiêu đề trong khu vực giới thiệu phía trên danh sách sản phẩm.</p>
+              <div class="form-grid">
+                <div class="field"><label for="setting-heroEyebrow">Nhãn nhỏ</label><input id="setting-heroEyebrow" name="heroEyebrow"></div>
+                <div class="field"><label for="setting-heroTitle">Tiêu đề lớn</label><input id="setting-heroTitle" name="heroTitle"></div>
+                <div class="field full"><label for="setting-heroDescription">Mô tả</label><textarea id="setting-heroDescription" name="heroDescription"></textarea></div>
+                <div class="field"><label for="setting-heroBadgeTitle">Nhãn nổi bật</label><input id="setting-heroBadgeTitle" name="heroBadgeTitle"></div>
+                <div class="field"><label for="setting-heroBadgeContent">Nội dung nổi bật</label><input id="setting-heroBadgeContent" name="heroBadgeContent"></div>
+                <div class="field full"><label>Ảnh lớn đầu trang</label><div class="logo-row"><div class="image-preview" id="hero-image-preview">Chưa có ảnh</div><div><input id="hero-image-file" type="file" accept="image/jpeg,image/png,image/webp,image/avif"><p class="upload-note">Ảnh ngang tỷ lệ khoảng 4:3 hoặc 16:9. Ảnh sẽ được tải lên Cloudinary.</p><input name="heroImageUrl" id="setting-hero-image-url" placeholder="https://..."></div></div></div>
+              </div>
+
+              <h2 style="margin-top:30px">Footer và liên hệ</h2><p>Trường để trống sẽ được ẩn khi phù hợp.</p>
+              <div class="form-grid">
+                <div class="field full"><label for="setting-footerDescription">Giới thiệu ngắn</label><textarea id="setting-footerDescription" name="footerDescription"></textarea></div>
+                <div class="field"><label for="setting-address">Địa chỉ</label><input id="setting-address" name="address"></div>
+                <div class="field"><label for="setting-phone">Số điện thoại</label><input id="setting-phone" name="phone"></div>
+                <div class="field"><label for="setting-email">Email</label><input id="setting-email" name="email" type="email"></div>
+                <div class="field"><label for="setting-facebookPageName">Tên Fanpage</label><input id="setting-facebookPageName" name="facebookPageName"></div>
+                <div class="field full"><label for="setting-facebookPageUsername">Username Fanpage</label><input id="setting-facebookPageUsername" name="facebookPageUsername"><small>Ví dụ URL là facebook.com/lamshop thì nhập lamshop.</small></div>
+              </div>
+
+              <h2 style="margin-top:30px">Kênh nhận đơn mặc định</h2><p>Website chỉ copy nội dung đơn và mở kênh đã chọn; khách tự dán và bấm gửi.</p>
+              <div class="form-grid">
+                <div class="field"><label for="setting-defaultSalesChannel">Kênh mặc định</label><select id="setting-defaultSalesChannel" name="defaultSalesChannel"><option value="facebook">Facebook Messenger</option><option value="instagram">Instagram</option><option value="zalo-personal">Zalo cá nhân</option><option value="zalo-oa">Zalo OA</option><option value="tiktok">TikTok</option></select></div>
+                <div class="field"><label for="setting-facebookUrl">Link Messenger/Facebook</label><input id="setting-facebookUrl" name="facebookUrl" placeholder="https://m.me/tenfanpage"></div>
+                <div class="field"><label for="setting-instagramUrl">Link Instagram</label><input id="setting-instagramUrl" name="instagramUrl" placeholder="https://instagram.com/taikhoan"></div>
+                <div class="field"><label for="setting-zaloPersonalUrl">Link Zalo cá nhân</label><input id="setting-zaloPersonalUrl" name="zaloPersonalUrl" placeholder="https://zalo.me/0900000000"></div>
+                <div class="field"><label for="setting-zaloOaUrl">Link Zalo OA</label><input id="setting-zaloOaUrl" name="zaloOaUrl" placeholder="https://zalo.me/... hoặc link OA"></div>
+                <div class="field"><label for="setting-tiktokUrl">Link TikTok</label><input id="setting-tiktokUrl" name="tiktokUrl" placeholder="https://tiktok.com/@taikhoan"></div>
+                <div class="field full"><div class="mini-note">Facebook, Instagram, Zalo và TikTok không cho website tự điền hoặc tự gửi tin nhắn vào hộp chat. Nút đặt hàng sẽ copy đơn trước rồi mở đúng tài khoản đã cấu hình.</div></div>
+              </div>
+              <div class="form-actions"><button class="button primary" type="submit">Lưu nội dung shop</button></div>
+            </form>
+          </section>
+
+          <section class="section" id="section-filters">
+            <div class="page-head"><div><h1>Bộ lọc giá</h1><p>Tạo các khoảng giá hiển thị trên website.</p></div><button class="button primary" id="add-filter">Thêm mức giá</button></div>
+            <div class="card">
+              <div class="table-wrap"><table><thead><tr><th>Tên hiển thị</th><th>Giá từ</th><th>Giá đến</th><th>Thứ tự</th><th>Trạng thái</th><th>Thao tác</th></tr></thead><tbody id="filter-rows"></tbody></table></div>
+              <div class="empty" id="filters-empty" hidden>Chưa có mức giá nào.</div>
+            </div>
+          </section>
+        </main>
+      </div>
+    </div>
+
+    <dialog id="product-dialog">
+      <div class="dialog-head"><h2 id="product-dialog-title">Thêm sản phẩm</h2><button class="dialog-close" type="button" data-close-dialog="product-dialog" aria-label="Đóng">×</button></div>
+      <form class="dialog-body" id="product-form">
+        <div class="form-grid">
+          <div class="field"><label for="product-id">Mã sản phẩm</label><input id="product-id" name="id" required placeholder="SP-0001"></div>
+          <div class="field"><label for="product-name">Tên sản phẩm</label><input id="product-name" name="name" required></div>
+          <div class="field"><label for="product-category">Danh mục</label><input id="product-category" name="category" list="category-options" required><datalist id="category-options"></datalist></div>
+          <div class="field"><label for="product-price">Giá bán</label><input id="product-price" name="price" type="number" min="0" required></div>
+          <div class="field"><label for="product-original-price">Giá gốc</label><input id="product-original-price" name="originalPrice" type="number" min="0"></div>
+          <div class="field"><label for="product-stock">Tồn kho</label><input id="product-stock" name="stock" type="number" min="0" placeholder="Để trống nếu không quản lý"></div>
+          <div class="field"><label for="product-status">Trạng thái bán</label><select id="product-status" name="status"><option value="active">Đang bán</option><option value="out-of-stock">Hết hàng</option><option value="draft">Bản nháp</option></select></div>
+          <div class="field"><label for="product-tags">Thẻ sản phẩm</label><input id="product-tags" name="tags" placeholder="Bluetooth | Mic rõ | Pin lâu"></div>
+          <div class="field full"><label for="product-description">Mô tả</label><textarea id="product-description" name="description"></textarea></div>
+          <div class="field full"><label>Ảnh sản phẩm (tối đa 5 ảnh)</label><div class="upload-box"><div class="upload-preview"><img id="product-image-preview" alt="Xem trước ảnh" hidden></div><div><input id="product-image-file" type="file" multiple accept="image/jpeg,image/png,image/webp,image/avif"><p class="upload-note" id="product-upload-note">Có thể chọn nhiều ảnh cùng lúc. Ảnh đầu tiên là ảnh đại diện.</p><div class="image-url-grid"><input id="product-image-url" name="imageUrl" placeholder="URL ảnh đại diện" required><input name="imageUrl2" placeholder="URL ảnh 2"><input name="imageUrl3" placeholder="URL ảnh 3"><input name="imageUrl4" placeholder="URL ảnh 4"><input name="imageUrl5" placeholder="URL ảnh 5"></div></div></div></div>
+          <div class="field full"><div class="check-row"><label class="check"><input id="product-featured" name="featured" type="checkbox">Sản phẩm nổi bật</label><label class="check"><input id="product-active" name="active" type="checkbox" checked>Hiển thị trên website</label></div></div>
+        </div>
+        <div class="form-actions"><button class="button" type="button" data-close-dialog="product-dialog">Hủy</button><button class="button primary" type="submit">Lưu sản phẩm</button></div>
+      </form>
+    </dialog>
+
+    <dialog id="filter-dialog">
+      <div class="dialog-head"><h2 id="filter-dialog-title">Thêm mức giá</h2><button class="dialog-close" type="button" data-close-dialog="filter-dialog" aria-label="Đóng">×</button></div>
+      <form class="dialog-body" id="filter-form">
+        <input id="filter-id" name="id" type="hidden">
+        <div class="form-grid">
+          <div class="field full"><label for="filter-label">Tên hiển thị</label><input id="filter-label" name="label" required placeholder="200.000đ – 500.000đ"></div>
+          <div class="field"><label for="filter-min">Giá từ</label><input id="filter-min" name="minPrice" type="number" min="0"><small>Để trống nếu không có giá thấp nhất.</small></div>
+          <div class="field"><label for="filter-max">Giá đến</label><input id="filter-max" name="maxPrice" type="number" min="0"><small>Sản phẩm có giá nhỏ hơn mức này.</small></div>
+          <div class="field"><label for="filter-order">Thứ tự</label><input id="filter-order" name="sortOrder" type="number" min="0" value="1"></div>
+          <div class="field"><label class="check" style="margin-top:29px"><input id="filter-active" name="active" type="checkbox" checked>Hiển thị trên website</label></div>
+        </div>
+        <div class="form-actions"><button class="button" type="button" data-close-dialog="filter-dialog">Hủy</button><button class="button primary" type="submit">Lưu mức giá</button></div>
+      </form>
+    </dialog>
+
+    <div class="busy" id="busy"><div class="busy-card"><span class="spinner"></span><span id="busy-text">Đang tải dữ liệu…</span></div></div>
+    <div class="toast" id="toast" hidden></div>
+
+    <script>
+      const state = { products: [], settings: {}, priceFilters: [], spreadsheetUrl: "", productPage: 1, productPageSize: 20, query: "" };
+      const $ = (id) => document.getElementById(id);
+      const escapeHtml = (value) => String(value ?? "").replace(/[&<>'"]/g, (char) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", "'": "&#39;", '"': "&quot;" })[char]);
+      const money = (value) => Number(value || 0).toLocaleString("vi-VN") + "đ";
+      const server = (method, ...args) => new Promise((resolve, reject) => {
+        const runner = google.script.run.withSuccessHandler(resolve).withFailureHandler(reject);
+        runner[method](...args);
+      });
+      const busy = (show, text = "Đang xử lý…") => { $("busy").hidden = !show; $("busy-text").textContent = text; };
+      let toastTimer;
+      const toast = (message) => { clearTimeout(toastTimer); $("toast").textContent = message; $("toast").hidden = false; toastTimer = setTimeout(() => $("toast").hidden = true, 2800); };
+      const fail = (error) => { busy(false); toast(error && error.message ? error.message : "Có lỗi xảy ra"); console.error(error); };
+
+      function applyData(data) {
+        state.products = data.products || [];
+        state.settings = data.settings || {};
+        state.priceFilters = data.priceFilters || [];
+        state.spreadsheetUrl = data.spreadsheetUrl || "";
+        $("user-email").textContent = data.userEmail || "Quản trị viên";
+        renderAll();
+      }
+
+      function renderAll() {
+        renderStats(); renderProducts(); renderSettings(); renderFilters(); renderCategoryOptions();
+      }
+
+      function renderStats() {
+        $("stat-total").textContent = state.products.length;
+        const active = state.products.filter((product) => product.active).length;
+        $("stat-active").textContent = active;
+        $("stat-hidden").textContent = state.products.length - active;
+      }
+
+      function filteredProducts() {
+        const query = state.query.trim().toLocaleLowerCase("vi");
+        if (!query) return state.products;
+        return state.products.filter((product) => [product.id, product.name, product.category].join(" ").toLocaleLowerCase("vi").includes(query));
+      }
+
+      function renderProducts() {
+        const items = filteredProducts();
+        const totalPages = Math.max(1, Math.ceil(items.length / state.productPageSize));
+        state.productPage = Math.min(state.productPage, totalPages);
+        const start = (state.productPage - 1) * state.productPageSize;
+        const pageItems = items.slice(start, start + state.productPageSize);
+        $("product-rows").innerHTML = pageItems.map((product) => `
+          <tr>
+            <td><div class="product-cell"><img src="${escapeHtml(product.imageUrl)}" alt=""><span><strong>${escapeHtml(product.name)}</strong><small>${escapeHtml(product.id)}</small></span></div></td>
+            <td>${escapeHtml(product.category)}</td><td><strong>${money(product.price)}</strong></td>
+            <td><span class="status ${product.status === "draft" ? "draft" : product.active && product.status !== "out-of-stock" ? "" : "off"}">${product.status === "draft" ? "Bản nháp" : product.status === "out-of-stock" ? "Hết hàng" : product.active ? "Đang hiển thị" : "Tạm ẩn"}</span></td>
+            <td>${escapeHtml(product.updatedAt || "")}</td>
+            <td><div class="actions"><button class="button small" data-edit-product="${escapeHtml(product.id)}">Sửa</button><button class="button small" data-duplicate-product="${escapeHtml(product.id)}">Nhân bản</button><button class="button small danger" data-delete-product="${escapeHtml(product.id)}">Lưu trữ</button></div></td>
+          </tr>`).join("");
+        $("products-empty").hidden = pageItems.length > 0;
+        $("product-page-info").textContent = items.length ? `${start + 1}–${start + pageItems.length} trong ${items.length} sản phẩm` : "0 sản phẩm";
+        $("product-prev").disabled = state.productPage <= 1;
+        $("product-next").disabled = state.productPage >= totalPages;
+      }
+
+      function renderSettings() {
+        Object.entries(state.settings).forEach(([key, value]) => {
+          const field = document.querySelector(`[name="${key}"]`);
+          if (field && document.activeElement !== field) field.value = value ?? "";
+        });
+        renderImagePreview($("logo-preview"), state.settings.logoUrl, "Chưa có logo");
+        renderImagePreview($("hero-image-preview"), state.settings.heroImageUrl, "Chưa có ảnh");
+      }
+
+      function renderFilters() {
+        $("filter-rows").innerHTML = state.priceFilters.map((filter) => `
+          <tr><td><strong>${escapeHtml(filter.label)}</strong></td><td>${filter.minPrice === "" ? "Không giới hạn" : money(filter.minPrice)}</td><td>${filter.maxPrice === "" ? "Không giới hạn" : money(filter.maxPrice)}</td><td>${filter.sortOrder}</td>
+          <td><span class="status ${filter.active ? "" : "off"}">${filter.active ? "Đang hiển thị" : "Tạm ẩn"}</span></td>
+          <td><div class="actions"><button class="button small" data-edit-filter="${escapeHtml(filter.id)}">Sửa</button><button class="button small danger" data-delete-filter="${escapeHtml(filter.id)}">Xóa</button></div></td></tr>`).join("");
+        $("filters-empty").hidden = state.priceFilters.length > 0;
+      }
+
+      function renderCategoryOptions() {
+        const categories = [...new Set(state.products.map((product) => product.category).filter(Boolean))].sort();
+        $("category-options").innerHTML = categories.map((category) => `<option value="${escapeHtml(category)}"></option>`).join("");
+      }
+
+      function renderImagePreview(container, url, fallback) {
+        container.innerHTML = url ? `<img src="${escapeHtml(url)}" alt="Xem trước">` : escapeHtml(fallback);
+      }
+
+      function openProduct(productId = "") {
+        const form = $("product-form"); form.reset();
+        $("product-active").checked = true; $("product-featured").checked = false; $("product-status").value = "active";
+        $("product-image-preview").hidden = true; $("product-image-url").value = "";
+        $("product-dialog-title").textContent = productId ? "Sửa sản phẩm" : "Thêm sản phẩm";
+        const product = state.products.find((item) => item.id === productId);
+        if (product) {
+          ["id", "name", "category", "price", "originalPrice", "stock", "status", "tags", "description", "imageUrl", "imageUrl2", "imageUrl3", "imageUrl4", "imageUrl5"].forEach((key) => {
+            const field = form.elements.namedItem(key); if (field) field.value = product[key] ?? "";
+          });
+          $("product-id").readOnly = true;
+          $("product-featured").checked = Boolean(product.featured);
+          $("product-active").checked = Boolean(product.active);
+          if (product.imageUrl) { $("product-image-preview").src = product.imageUrl; $("product-image-preview").hidden = false; }
+        } else { $("product-id").readOnly = false; }
+        $("product-dialog").showModal();
+      }
+
+      function openFilter(filterId = "") {
+        const form = $("filter-form"); form.reset(); $("filter-active").checked = true;
+        $("filter-dialog-title").textContent = filterId ? "Sửa mức giá" : "Thêm mức giá";
+        const filter = state.priceFilters.find((item) => item.id === filterId);
+        if (filter) {
+          ["id", "label", "minPrice", "maxPrice", "sortOrder"].forEach((key) => { form.elements.namedItem(key).value = filter[key] ?? ""; });
+          $("filter-active").checked = Boolean(filter.active);
+        } else { $("filter-order").value = state.priceFilters.length + 1; }
+        $("filter-dialog").showModal();
+      }
+
+      async function uploadImage(file, type, name) {
+        if (!file) return "";
+        if (file.size > 10 * 1024 * 1024) throw new Error("Ảnh phải nhỏ hơn 10 MB");
+        const signature = await server("getCloudinaryUploadSignature", { type, name });
+        const data = new FormData();
+        data.append("file", file); data.append("api_key", signature.apiKey); data.append("timestamp", signature.timestamp);
+        data.append("folder", signature.folder); data.append("public_id", signature.publicId); data.append("signature", signature.signature);
+        const response = await fetch(`https://api.cloudinary.com/v1_1/${signature.cloudName}/image/upload`, { method: "POST", body: data });
+        const result = await response.json();
+        if (!response.ok || !result.secure_url) throw new Error(result.error?.message || "Không tải được ảnh");
+        return result.secure_url;
+      }
+
+      document.addEventListener("click", async (event) => {
+        const target = event.target.closest("button"); if (!target) return;
+        const tab = target.dataset.tab;
+        if (tab) {
+          document.querySelectorAll(".nav button").forEach((button) => button.classList.toggle("active", button.dataset.tab === tab));
+          document.querySelectorAll(".section").forEach((section) => section.classList.toggle("active", section.id === `section-${tab}`));
+        }
+        if (target.id === "add-product") openProduct();
+        if (target.dataset.editProduct) openProduct(target.dataset.editProduct);
+        if (target.dataset.duplicateProduct) {
+          busy(true, "Đang nhân bản sản phẩm…"); try { applyData(await server("duplicateProduct", target.dataset.duplicateProduct)); busy(false); toast("Đã tạo bản sao ở trạng thái nháp"); } catch (error) { fail(error); }
+        }
+        if (target.dataset.deleteProduct && confirm(`Lưu trữ sản phẩm ${target.dataset.deleteProduct}? Sản phẩm sẽ không còn hiển thị nhưng dữ liệu vẫn nằm trong Google Sheets.`)) {
+          busy(true, "Đang lưu trữ sản phẩm…"); try { applyData(await server("deleteProduct", target.dataset.deleteProduct)); busy(false); toast("Đã lưu trữ sản phẩm"); } catch (error) { fail(error); }
+        }
+        if (target.id === "add-filter") openFilter();
+        if (target.dataset.editFilter) openFilter(target.dataset.editFilter);
+        if (target.dataset.deleteFilter && confirm("Xóa mức giá này?")) {
+          busy(true, "Đang xóa mức giá…"); try { applyData(await server("deletePriceFilter", target.dataset.deleteFilter)); busy(false); toast("Đã xóa mức giá"); } catch (error) { fail(error); }
+        }
+        if (target.dataset.closeDialog) $(target.dataset.closeDialog).close();
+        if (target.id === "open-sheet" && state.spreadsheetUrl) window.open(state.spreadsheetUrl, "_blank");
+      });
+
+      $("product-search").addEventListener("input", (event) => { state.query = event.target.value; state.productPage = 1; renderProducts(); });
+      $("product-prev").addEventListener("click", () => { state.productPage -= 1; renderProducts(); });
+      $("product-next").addEventListener("click", () => { state.productPage += 1; renderProducts(); });
+
+      $("product-image-url").addEventListener("input", (event) => { const image = $("product-image-preview"); image.src = event.target.value; image.hidden = !event.target.value; });
+      $("product-image-file").addEventListener("change", async (event) => {
+        const files = [...event.target.files].slice(0, 5); if (!files.length) return;
+        busy(true, `Đang tải ${files.length} ảnh sản phẩm…`);
+        try {
+          const baseName = $("product-id").value || $("product-name").value || "product";
+          const urls = [];
+          for (let index = 0; index < files.length; index += 1) urls.push(await uploadImage(files[index], "products", `${baseName}-${index + 1}`));
+          ["imageUrl", "imageUrl2", "imageUrl3", "imageUrl4", "imageUrl5"].forEach((key, index) => { const field = $("product-form").elements.namedItem(key); if (urls[index]) field.value = urls[index]; });
+          $("product-image-preview").src = urls[0]; $("product-image-preview").hidden = false;
+          busy(false); toast(`Đã tải ${urls.length} ảnh lên`);
+        } catch (error) { fail(error); }
+      });
+
+      $("logo-file").addEventListener("change", async (event) => {
+        const file = event.target.files[0]; if (!file) return;
+        busy(true, "Đang tải logo…");
+        try {
+          const url = await uploadImage(file, "brand", state.settings.shopName || file.name);
+          $("setting-logo-url").value = url; state.settings.logoUrl = url; renderImagePreview($("logo-preview"), url, "Chưa có logo");
+          busy(false); toast("Đã tải logo lên. Bấm Lưu để áp dụng.");
+        } catch (error) { fail(error); }
+      });
+
+      $("hero-image-file").addEventListener("change", async (event) => {
+        const file = event.target.files[0]; if (!file) return;
+        busy(true, "Đang tải ảnh đầu trang…");
+        try {
+          const url = await uploadImage(file, "brand", `hero-${state.settings.shopName || file.name}`);
+          $("setting-hero-image-url").value = url; state.settings.heroImageUrl = url; renderImagePreview($("hero-image-preview"), url, "Chưa có ảnh");
+          busy(false); toast("Đã tải ảnh đầu trang. Bấm Lưu để áp dụng.");
+        } catch (error) { fail(error); }
+      });
+
+      $("product-form").addEventListener("submit", async (event) => {
+        event.preventDefault(); const form = event.currentTarget; const data = Object.fromEntries(new FormData(form));
+        data.featured = $("product-featured").checked; data.active = $("product-active").checked;
+        busy(true, "Đang lưu sản phẩm…");
+        try { applyData(await server("saveProduct", data)); $("product-dialog").close(); busy(false); toast("Đã lưu sản phẩm"); } catch (error) { fail(error); }
+      });
+
+      $("settings-form").addEventListener("submit", async (event) => {
+        event.preventDefault(); const data = Object.fromEntries(new FormData(event.currentTarget));
+        busy(true, "Đang lưu nội dung shop…");
+        try { applyData(await server("saveSettings", data)); busy(false); toast("Đã lưu nội dung shop"); } catch (error) { fail(error); }
+      });
+
+      $("filter-form").addEventListener("submit", async (event) => {
+        event.preventDefault(); const data = Object.fromEntries(new FormData(event.currentTarget)); data.active = $("filter-active").checked;
+        busy(true, "Đang lưu mức giá…");
+        try { applyData(await server("savePriceFilter", data)); $("filter-dialog").close(); busy(false); toast("Đã lưu mức giá"); } catch (error) { fail(error); }
+      });
+
+      (async function init() {
+        busy(true, "Đang tải dữ liệu…");
+        try { applyData(await server("getAdminData")); busy(false); }
+        catch (error) {
+          try { applyData(await server("setupDatabase")); busy(false); toast("Đã khởi tạo Google Sheets"); }
+          catch (setupError) { fail(setupError); }
+        }
+      })();
+    </script>
+  </body>
+</html>
