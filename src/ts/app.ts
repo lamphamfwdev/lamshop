@@ -251,5 +251,45 @@ getElement("filter-toggle").addEventListener("click",()=>{const f=getElement("fi
 [cartDialog,productDialog].forEach((overlay)=>overlay.addEventListener("click",(e)=>{if(e.target===overlay)closeOverlay(overlay);}));
 document.addEventListener("keydown",(e)=>{if(e.key==="Escape"){if(!productDialog.hidden)closeOverlay(productDialog);else if(!cartDialog.hidden)closeOverlay(cartDialog);}});
 
-const initialize=async():Promise<void>=>{applyShopInformation();renderPriceFilters();renderCategories();renderProducts();renderCart();try{const catalog=await loadRemoteCatalog();if(!catalog)return;products=Array.isArray(catalog.products)?catalog.products:[];settings={...settings,...catalog.settings};priceFilters=Array.isArray(catalog.priceFilters)?catalog.priceFilters:[];applyShopInformation();renderPriceFilters();renderCategories();renderProducts();renderCart();}catch(error){catalogStatus.textContent="Chưa tải được dữ liệu mới. Website đang hiển thị dữ liệu dự phòng.";catalogStatus.hidden=false;console.error(error);}};
+const initialize = async (): Promise<void> => {
+  applyShopInformation();
+
+  // Ẩn danh sách trong lúc chờ dữ liệu Google Sheets.
+  productList.hidden = true;
+  resultCount.textContent = "Đang tải sản phẩm…";
+
+  try {
+    const catalog = await loadRemoteCatalog();
+
+    if (catalog) {
+      products = Array.isArray(catalog.products)
+        ? catalog.products
+        : [];
+
+      settings = {
+        ...settings,
+        ...catalog.settings
+      };
+
+      priceFilters = Array.isArray(catalog.priceFilters)
+        ? catalog.priceFilters
+        : [];
+    }
+  } catch (error) {
+    catalogStatus.textContent =
+      "Chưa tải được dữ liệu mới. Website đang hiển thị dữ liệu dự phòng.";
+
+    catalogStatus.hidden = false;
+
+    console.error(error);
+  }
+
+  // Chỉ render một lần sau khi API đã phản hồi.
+  applyShopInformation();
+  renderPriceFilters();
+  renderCategories();
+  renderProducts();
+  renderCart();
+};
+
 void initialize();
